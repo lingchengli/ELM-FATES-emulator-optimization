@@ -7,7 +7,7 @@
 
 ## 📖 Citation
 
-**If you use this framework, please cite:**
+**This framework was developed and published via:**
 
 Li, L., Fang, Y., Zheng, Z., Shi, M., Longo, M., Koven, C. D., Holm, J. A., Fisher, R. A., McDowell, N. G., Chambers, J., and Leung, L. R.: A machine learning approach targeting parameter estimation for plant functional type coexistence modeling using ELM-FATES (v2.0), *Geosci. Model Dev.*, 16, 4017–4040, https://doi.org/10.5194/gmd-16-4017-2023, 2023.
 
