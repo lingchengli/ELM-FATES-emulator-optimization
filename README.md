@@ -36,7 +36,7 @@ A comprehensive AutoML-powered framework for calibrating the Functionally Assemb
 ## 🌟 Key Features
 
 - **AutoML-Powered**: Uses **FLAML (Fast Lightweight AutoML)** for automatic model selection and hyperparameter optimization - no manual tuning needed!
-- **Fast Surrogate Modeling**: ML emulators replace expensive FATES simulations, reducing calibration time from months to days
+- **Fast Surrogate Modeling**: ML emulators replace expensive FATES simulations
 - **Ecosystem Coexistence Focus**: Optimize parameters to maintain multi-PFT (Plant Functional Type) coexistence and biodiversity
 - **Interpretable AI**: SHAP (SHapley Additive exPlanations) values reveal how parameters influence model outputs
 - **Modular Workflow**: Three-stage pipeline adaptable to different sites and calibration objectives
