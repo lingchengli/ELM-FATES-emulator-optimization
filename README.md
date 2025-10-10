@@ -5,24 +5,50 @@
 [![DOI](https://img.shields.io/badge/DOI-10.5194%2Fgmd--16--4017--2023-blue)](https://doi.org/10.5194/gmd-16-4017-2023)
 [![GMD Paper](https://img.shields.io/badge/Paper-GMD%202023-green)](https://gmd.copernicus.org/articles/16/4017/2023/)
 
-A comprehensive framework for calibrating the Functionally Assembled Terrestrial Ecosystem Simulator (FATES) using XGBoost machine learning emulators. This approach dramatically reduces computational costs while enabling optimization for ecosystem coexistence and multiple ecological objectives.
+## 📖 Citation
+
+**If you use this framework, please cite:**
+
+Li, L., Fang, Y., Zheng, Z., Shi, M., Longo, M., Koven, C. D., Holm, J. A., Fisher, R. A., McDowell, N. G., Chambers, J., and Leung, L. R.: A machine learning approach targeting parameter estimation for plant functional type coexistence modeling using ELM-FATES (v2.0), *Geosci. Model Dev.*, 16, 4017–4040, https://doi.org/10.5194/gmd-16-4017-2023, 2023.
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@article{Li2023,
+  author = {Li, L. and Fang, Y. and Zheng, Z. and Shi, M. and Longo, M. and Koven, C. D. and Holm, J. A. and Fisher, R. A. and McDowell, N. G. and Chambers, J. and Leung, L. R.},
+  title = {A machine learning approach targeting parameter estimation for plant functional type coexistence modeling using ELM-FATES (v2.0)},
+  journal = {Geoscientific Model Development},
+  volume = {16},
+  year = {2023},
+  pages = {4017--4040},
+  doi = {10.5194/gmd-16-4017-2023}
+}
+```
+</details>
+
+---
+
+## 🌟 Overview
+
+A comprehensive AutoML-powered framework for calibrating the Functionally Assembled Terrestrial Ecosystem Simulator (FATES). This approach uses **FLAML (Fast Lightweight AutoML)** to automatically train optimized machine learning emulators, dramatically reducing computational costs while enabling optimization for ecosystem coexistence and multiple ecological objectives.
 
 ## 🌟 Key Features
 
-- **Fast Surrogate Modeling**: XGBoost emulators replace expensive FATES simulations, reducing calibration time from months to days
-- **AutoML-Powered**: Uses FLAML (Fast Lightweight AutoML) for automatic hyperparameter optimization
+- **AutoML-Powered**: Uses **FLAML (Fast Lightweight AutoML)** for automatic model selection and hyperparameter optimization - no manual tuning needed!
+- **Fast Surrogate Modeling**: ML emulators replace expensive FATES simulations, reducing calibration time from months to days
 - **Ecosystem Coexistence Focus**: Optimize parameters to maintain multi-PFT (Plant Functional Type) coexistence and biodiversity
 - **Interpretable AI**: SHAP (SHapley Additive exPlanations) values reveal how parameters influence model outputs
 - **Modular Workflow**: Three-stage pipeline adaptable to different sites and calibration objectives
 - **HPC-Ready**: Includes SLURM job submission scripts for high-performance computing environments
 - **Validated Approach**: Tested and validated at Manaus K34 flux tower site in the Amazon
 
-## 🔬 Overview
+## 🔬 Workflow
 
 Traditional ecosystem model calibration requires thousands of simulations, making it computationally prohibitive. FATES-Emulator addresses this by:
 
 1. **Sensitivity Analysis**: Sample parameter space and run FATES simulations to understand parameter impacts
-2. **Emulator Training**: Train XGBoost models using FLAML AutoML to predict FATES outputs from parameters (GPP, ET, biomass, mortality, etc.)
+2. **Emulator Training**: Use **FLAML AutoML** to automatically train and optimize ML models (XGBoost, LightGBM, etc.) that predict FATES outputs from parameters (GPP, ET, biomass, mortality, etc.)
 3. **Calibration**: Use emulators to rapidly explore parameter space and optimize for observations and coexistence
 
 ### Workflow Diagram
@@ -38,10 +64,11 @@ Traditional ecosystem model calibration requires thousands of simulations, makin
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  Step 2: Emulator Training                                          │
+│  Step 2: Emulator Training (AutoML)                                 │
 │  ├─ Prepare training data (parameters → outputs)                   │
-│  ├─ Train XGBoost models for each output variable                  │
-│  ├─ Hyperparameter optimization (Bayesian search)                  │
+│  ├─ Use FLAML AutoML to train models for each output variable      │
+│  ├─ Automatic model selection (XGBoost, LightGBM, RF, etc.)        │
+│  ├─ Automatic hyperparameter optimization                          │
 │  ├─ Evaluate model performance (R², RMSE)                          │
 │  └─ SHAP analysis for interpretability                             │
 └─────────────────────────────────────────────────────────────────────┘
@@ -63,8 +90,8 @@ Traditional ecosystem model calibration requires thousands of simulations, makin
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/fates-emulator.git
-cd fates-emulator
+git clone https://github.com/lingchengli/fates-emulator-optimization.git
+cd fates-emulator-optimization
 
 # Create conda environment
 conda env create -f environment.yml
@@ -78,12 +105,12 @@ pip install -r requirements.txt
 
 ```bash
 cd examples/manaus_k34
-python run_complete_workflow.py
+python run_example.py
 ```
 
 This will:
 - Load pre-computed sensitivity analysis data
-- Train XGBoost emulators for GPP, ET, AGB, and biomass ratios
+- Use **FLAML AutoML** to train optimized emulators for GPP, ET, AGB, and biomass ratios
 - Optimize parameters for flux tower observations and PFT coexistence
 - Generate diagnostic plots and SHAP analyses
 
@@ -156,9 +183,11 @@ Typical performance on HPC systems:
 ### Software Dependencies
 
 - Python 3.8+
-- XGBoost >= 1.5.0
+- **FLAML >= 1.0.0** (AutoML framework)
+- XGBoost >= 1.5.0 (ML model)
+- LightGBM >= 3.3.0 (ML model)
 - scikit-learn >= 1.0.0
-- SHAP >= 0.40.0
+- SHAP >= 0.40.0 (interpretability)
 - pandas, numpy, xarray
 - netCDF4
 - matplotlib, seaborn
@@ -172,24 +201,6 @@ Typical performance on HPC systems:
 - Domain and surface datasets
 
 See [FATES Setup Guide](docs/02_fates_setup.md) for details.
-
-## 📖 Citation
-
-If you use this framework in your research, please cite:
-
-**Li, L., Fang, Y., Zheng, Z., Shi, M., Longo, M., Koven, C. D., Holm, J. A., Fisher, R. A., McDowell, N. G., Chambers, J., and Leung, L. R.**: A machine learning approach targeting parameter estimation for plant functional type coexistence modeling using ELM-FATES (v2.0), *Geosci. Model Dev.*, 16, 4017–4040, https://doi.org/10.5194/gmd-16-4017-2023, 2023.
-
-```bibtex
-@article{Li2023,
-  author = {Li, L. and Fang, Y. and Zheng, Z. and Shi, M. and Longo, M. and Koven, C. D. and Holm, J. A. and Fisher, R. A. and McDowell, N. G. and Chambers, J. and Leung, L. R.},
-  title = {A machine learning approach targeting parameter estimation for plant functional type coexistence modeling using ELM-FATES (v2.0)},
-  journal = {Geoscientific Model Development},
-  volume = {16},
-  year = {2023},
-  pages = {4017--4040},
-  doi = {10.5194/gmd-16-4017-2023}
-}
-```
 
 ## 🤝 Contributing
 
@@ -219,13 +230,14 @@ Special thanks to:
 ## 📧 Contact
 
 For questions and support:
-- Open an issue on GitHub: [FATES-Emulator Issues](https://github.com/yourusername/fates-emulator/issues)
+- Open an issue on GitHub: [Issues](https://github.com/lingchengli/fates-emulator-optimization/issues)
 - Email: lingcheng.li@pnnl.gov
 
 ## 🔗 Related Resources
 
 - [FATES Documentation](https://fates-users-guide.readthedocs.io/)
 - [E3SM Documentation](https://e3sm.org/)
+- [FLAML Documentation](https://microsoft.github.io/FLAML/)
 - [XGBoost Documentation](https://xgboost.readthedocs.io/)
 - [SHAP Documentation](https://shap.readthedocs.io/)
 
