@@ -1,0 +1,178 @@
+# FATES-Emulator Configuration for Manaus K34 Site
+# This configuration file contains all paths and settings for the workflow
+
+# Site Information
+site:
+  name: "Manaus K34"
+  location:
+    latitude: -2.6091
+    longitude: -60.2091  # or 299.7909 E
+    elevation: 130  # meters
+  description: "LBA K34 flux tower site in Central Amazon rainforest"
+
+# Directory Paths (customize for your system)
+paths:
+  # Base directories
+  project_dir: "/path/to/your/fates-emulator"
+  data_dir: "${project_dir}/examples/manaus_k34/data"
+  output_dir: "${project_dir}/examples/manaus_k34/output"
+  
+  # Input files
+  fates_params_base: "${data_dir}/fates_params_base.nc"
+  domain_file: "${data_dir}/domain_k34_1x1.nc"
+  surface_file: "${data_dir}/surfdata_k34_1x1.nc"
+  forcing_dir: "${data_dir}/forcing_data"
+  observations: "${data_dir}/observations/k34_observations.csv"
+  
+  # Output directories
+  sensitivity_dir: "${output_dir}/step1_sensitivity"
+  emulator_dir: "${output_dir}/step2_emulators"
+  calibration_dir: "${output_dir}/step3_calibration"
+
+# Parameter Configuration
+parameters:
+  # Parameter names and bounds
+  param_list:
+    - name: "fates_leaf_vcmax25top"
+      pft_specific: true
+      bounds: [40, 105]
+      units: "μmol/m²/s"
+      description: "Maximum carboxylation rate"
+    
+    - name: "fates_leaf_slatop"
+      pft_specific: true
+      bounds: [0.005, 0.04]
+      units: "m²/gC"
+      description: "Specific leaf area"
+    
+    - name: "fates_mort_bmort"
+      pft_specific: true
+      bounds: [0.005, 0.05]
+      units: "/year"
+      description: "Background mortality rate"
+    
+    - name: "fates_wood_density"
+      pft_specific: true
+      bounds: [0.2, 1.0]
+      units: "g/cm³"
+      description: "Wood density"
+    
+    - name: "fates_leaf_long"
+      pft_specific: true
+      bounds: [0.2, 3.0]
+      units: "years"
+      description: "Leaf longevity"
+    
+    - name: "fates_alloc_storage_cushion"
+      pft_specific: false
+      bounds: [0.8, 1.5]
+      units: "unitless"
+      description: "Storage allocation cushion"
+  
+  # PFT configuration
+  pfts:
+    early:
+      index: 0
+      suffix: "_e"
+      description: "Early successional species"
+    late:
+      index: 1
+      suffix: "_l"
+      description: "Late successional species"
+
+# Sensitivity Analysis Configuration (Step 1)
+sensitivity:
+  n_samples: 1500
+  sampling_method: "latin_hypercube"
+  seed: 11
+  apply_ecological_constraints: true
+  oversample_factor: 40.0
+
+# Emulator Training Configuration (Step 2)
+emulator:
+  # Target variables to emulate
+  target_variables:
+    - "GPP"
+    - "ET"
+    - "AGB"
+    - "FSH"
+    - "PFTbiomass_e"
+    - "PFTbiomass_l"
+    - "PFTbiomass_r"
+  
+  # Training settings
+  test_size: 0.1
+  random_state: 23
+  
+  # FLAML AutoML settings
+  automl:
+    time_budget_per_model: 600  # seconds (10 minutes)
+    estimator_list: ["xgboost", "rf", "lgbm", "extra_tree"]
+    metric: "r2"
+    n_jobs: -1  # use all available cores
+
+# Calibration Configuration (Step 3)
+calibration:
+  # Observations to match
+  observations:
+    GPP: 8.5  # gC/m²/day (example value)
+    ET: 3.2   # mm/day (example value)
+    FSH: 50.0 # W/m² (example value)
+  
+  # Objective function weights
+  weights:
+    observations: 1.0
+    coexistence: 1.0
+    ecological: 0.5
+  
+  # Optimization settings
+  method: "differential_evolution"
+  n_iterations: 1000
+  n_starts: 5  # for multi-start optimization
+  random_seed: 23
+  
+  # Coexistence constraints
+  coexistence:
+    min_biomass_ratio: 0.1
+    max_biomass_ratio: 0.9
+
+# FATES Simulation Configuration
+fates:
+  # E3SM/FATES settings
+  compset: "IELMFATES"
+  resolution: "ELM_USRDAT"
+  
+  # Simulation settings
+  simulation_years: 20
+  spinup_years: 10
+  output_frequency: "monthly"
+  
+  # HPC settings
+  machine: "compy"  # or your HPC system name
+  project: "e3sm"
+  queue: "short"
+  nodes: 1
+  tasks_per_node: 40
+  walltime: "04:00:00"
+
+# Logging
+logging:
+  level: "INFO"
+  log_file: "${output_dir}/fates_emulator.log"
+
+# Analysis
+analysis:
+  # Coexistence criteria
+  coexistence_threshold: 0.1
+  
+  # SHAP analysis
+  shap:
+    background_samples: 100
+    max_display: 15
+  
+  # Plots
+  figures:
+    dpi: 300
+    format: "pdf"
+    style: "publication"
+
